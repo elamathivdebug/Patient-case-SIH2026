@@ -39,6 +39,10 @@ Our solution collects patient information through **voice and touch** in their p
 
 AI processes the collected information to generate a **structured medical history summary**, which can be accessed by doctors through a dashboard before consultation.
 
+Patient health information is highly sensitive and requires secure, consent-based handling.
+Ensuring controlled access, data privacy, and secure sharing in alignment with DPDP Act 2023 and ABDM consent principles.
+
+
 ---
 
 # ✨ Key Features
@@ -81,6 +85,28 @@ Makes relevant patient history available to the doctor before the consultation b
 
 ---
 
+## 🔐Data Privacy & Security
+
+- Obtain patient consent before collecting and sharing applicable health information.
+- Use secure authentication and role-based access control for authorized hospital staff.
+- Encrypt patient data during storage and transmission.
+- Maintain audit logs for important data access and activities.
+- Follow privacy-by-design principles aligned with the **DPDP Act 2023** and **ABDM consent framework**.
+
+## 📚 Research & References
+
+The proposed solution and technical approach refer to resources related to:
+
+- [World Health Organization (WHO) – Artificial Intelligence for Health](https://www.who.int/health-topics/artificial-intelligence)
+- [WHO – Ethics & Governance of AI for Health](https://www.who.int/publications/i/item/9789240029200)
+- [Ayushman Bharat Digital Mission (ABDM)](https://abdm.gov.in/)
+- [BHASHINI – Digital India](https://bhashini.gov.in/)
+- [AI4Bharat – Indian Language AI Research](https://ai4bharat.org/)
+- [HL7 FHIR](https://www.hl7.org/fhir/)
+- [Digital Personal Data Protection Act, 2023 Healthcare privacy and security principles](https://www.meity.gov.in/data-protection-framework)
+ 
+
+
 # 🔄 System Workflow
 
 ```text
@@ -104,17 +130,8 @@ Doctor Dashboard
    ↓
 Doctor Consultation
 
---
-##📚 Research & References
+---
 
-The proposed solution and technical approach refer to resources related to:
-World Health Organization (WHO) – Artificial Intelligence for Health
-WHO – Ethics & Governance of AI for Health
-Ayushman Bharat Digital Mission (ABDM)
-BHASHINI – Digital India
-AI4Bharat – Indian Language AI Research
-HL7 FHIR
-Digital Personal Data Protection Act, 2023 Healthcare privacy and security principles
 
 
 
