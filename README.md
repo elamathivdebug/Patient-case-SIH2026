@@ -104,3 +104,17 @@ Doctor Dashboard
    ↓
 Doctor Consultation
 
+--
+##📚 Research & References
+
+The proposed solution and technical approach refer to resources related to:
+World Health Organization (WHO) – Artificial Intelligence for Health
+WHO – Ethics & Governance of AI for Health
+Ayushman Bharat Digital Mission (ABDM)
+BHASHINI – Digital India
+AI4Bharat – Indian Language AI Research
+HL7 FHIR
+Digital Personal Data Protection Act, 2023 Healthcare privacy and security principles
+
+
+
