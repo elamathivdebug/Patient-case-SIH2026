@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Voice Case-Taking System</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        navy: { 800: '#0F172A', 900: '#0B0F19' },
+                        primary: '#1D4ED8',
+                        lightbg: '#F0F6FF'
+                    }
+                }
+            }
+        }
+    </script>
+
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body class="bg-lightbg text-slate-800 font-sans min-h-screen">
+
+    <!-- Top Navigation Bar -->
+    <header class="bg-navy-800 text-white p-4 shadow-md flex justify-between items-center px-8">
+        <div class="flex items-center space-x-3">
+            <i class="fa-solid fa-hospital-user text-2xl text-blue-400"></i>
+            <h1 class="text-xl font-bold tracking-wide">MedVoice Intake</h1>
+        </div>
+
+        <div class="space-x-2">
+            <button onclick="switchView('patient')" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg text-sm font-semibold transition">
+                <i class="fa-solid fa-user-nurse mr-1"></i> Patient Interface
+            </button>
+
+            <button onclick="switchView('doctor')" class="px-4 py-2 bg-slate-700 hover:bg-slate-600 rounded-lg text-sm font-semibold transition">
+                <i class="fa-solid fa-user-doctor mr-1"></i> Doctor Dashboard
+            </button>
+        </div>
+    </header>
+
+    <main class="max-w-6xl mx-auto p-6">
+
+        <!-- =================================================================== -->
+        <!-- VIEW 1: PATIENT VOICE-LED INTAKE SCREEN                             -->
+        <!-- =================================================================== -->
+
+        <section id="patient-view" class="block">
+
+            <!-- STEP 1: LANGUAGE SELECTION SCREEN -->
+            <div id="lang-selection-card" class="bg-white p-8 rounded-2xl shadow-lg border border-blue-100 text-center max-w-2xl mx-auto mt-10">
+
+                <h2 class="text-2xl font-bold text-slate-800 mb-2">
+                    Welcome to Your Care Consultation
+                </h2>
+
+                <p class="text-slate-500 mb-8">
+                    Select your preferred language to begin the voice case-taking process.
+                </p>
+
+                <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+
+                    <button onclick="selectLanguage('English', 'en-US')" class="p-5 border-2 border-blue-200 hover:border-blue-600 rounded-xl font-semibold text-lg hover:bg-blue-50 transition text-slate-700 flex flex-col items-center">
+                        <span class="text-2xl mb-1">🌐</span> English
+                    </button>
+
+                    <button onclick="selectLanguage('Tamil', 'ta-IN')" class="p-5 border-2 border-blue-200 hover:border-blue-600 rounded-xl font-semibold text-lg hover:bg-blue-50 transition text-slate-700 flex flex-col items-center">
+                        <span class="text-2xl mb-1">அ</span> தமிழ் (Tamil)
+                    </button>
+
+                    <button onclick="selectLanguage('Hindi', 'hi-IN')" class="p-5 border-2 border-blue-200 hover:border-blue-600 rounded-xl font-semibold text-lg hover:bg-blue-50 transition text-slate-700 flex flex-col items-center">
+                        <span class="text-2xl mb-1">अ</span> हिन्दी (Hindi)
+                    </button>
+
+                    <button onclick="selectLanguage('Telugu', 'te-IN')" class="p-5 border-2 border-blue-200 hover:border-blue-600 rounded-xl font-semibold text-lg hover:bg-blue-50 transition text-slate-700 flex flex-col items-center">
+                        <span class="text-2xl mb-1">తె</span> తెలుగు (Telugu)
+                    </button>
+
+                    <button onclick="selectLanguage('Malayalam', 'ml-IN')" class="p-5 border-2 border-blue-200 hover:border-blue-600 rounded-xl font-semibold text-lg hover:bg-blue-50 transition text-slate-700 flex flex-col items-center">
+                        <span class="text-2xl mb-1">മ</span> മലയാളം (Malayalam)
+                    </button>
+
+                    <button onclick="selectLanguage('Kannada', 'kn-IN')" class="p-5 border-2 border-blue-200 hover:border-blue-600 rounded-xl font-semibold text-lg hover:bg-blue-50 transition text-slate-700 flex flex-col items-center">
+                        <span class="text-2xl mb-1">ക</span> ಕನ್ನಡ (Kannada)
+                    </button>
+
+                </div>
+            </div>
+
+
+            <!-- STEP 2: ACTIVE VOICE ASSISTANT CASE-TAKING INTERFACE -->
+            <div id="voice-assistant-card" class="hidden bg-white p-8 rounded-2xl shadow-xl border border-blue-100 max-w-3xl mx-auto mt-4">
+
+                <div class="flex justify-between items-center pb-4 border-b border-slate-100 mb-6">
+
+                    <div>
+                        <span id="session-lang-badge" class="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-xs font-bold uppercase">
+                            English
+                        </span>
+
+                        <span id="session-patient-id" class="ml-2 text-xs text-slate-400 font-mono">
+                            ID: --
+                        </span>
+                    </div>
+
+                    <div class="text-sm font-semibold text-slate-500">
+                        Step <span id="current-step-num">1</span> of 11
+                    </div>
+
+                </div>
+
+
+                <div class="text-center my-6">
+
+                    <div id="mic-visualizer" class="w-24 h-24 bg-blue-600 rounded-full mx-auto flex items-center justify-center text-white text-3xl shadow-lg transition-all duration-300">
+
+                        <i id="mic-icon" class="fa-solid fa-volume-high"></i>
+
+                    </div>
+
+                    <p id="mic-status-text" class="mt-3 text-sm font-semibold text-blue-600 tracking-wide uppercase">
+                        Assistant Speaking...
+                    </p>
+
+                    <h2 id="assistant-question-text" class="text-2xl font-bold text-slate-800 mt-4 px-4 leading-snug">
+                        "Loading prompt..."
+                    </h2>
+
+                </div>
+
+
+                <div class="bg-slate-50 rounded-xl p-4 border border-slate-200 mb-6 min-h-[90px]">
+
+                    <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">
+                        Recognized Speech
+                    </label>
+
+                    <p id="recognized-speech-text" class="text-lg text-slate-700 italic">
+                        Listening for voice response...
+                    </p>
+
+                </div>
+
+
+                <div class="grid grid-cols-3 gap-3 mb-6">
+
+                    <button onclick="reSpeakQuestion()" class="py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold rounded-xl text-sm transition flex items-center justify-center">
+                        <i class="fa-solid fa-rotate-right mr-2"></i> Repeat Question
+                    </button>
+
+                    <button onclick="clearAndReListen()" class="py-3 bg-amber-100 hover:bg-amber-200 text-amber-800 font-semibold rounded-xl text-sm transition flex items-center justify-center">
+                        <i class="fa-solid fa-pen-to-square mr-2"></i> Edit / Retry
+                    </button>
+
+                    <button onclick="confirmAndNext()" class="py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-xl text-sm transition shadow flex items-center justify-center">
+                        Confirm & Next
+                        <i class="fa-solid fa-arrow-right ml-2"></i>
+                    </button>
+
+                </div>
+
+
+                <div class="border-t border-slate-100 pt-4">
+
+                    <button onclick="toggleTouchFallback()" class="text-xs text-slate-500 hover:text-blue-600 font-semibold flex items-center">
+
+                        <i class="fa-solid fa-keyboard mr-1"></i>
+                        Having trouble with voice? Use Touchscreen Input
+
+                    </button>
+
+                    <div id="touchscreen-fallback-input" class="hidden mt-3 flex space-x-2">
+
+                        <input
+                            type="text"
+                            id="manual-text-input"
+                            placeholder="Type response manually..."
+                            class="flex-grow p-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 outline-none text-sm"
+                        >
+
+                        <button onclick="submitManualInput()" class="px-5 bg-slate-800 hover:bg-slate-900 text-white font-semibold rounded-xl text-sm">
+                            Submit
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- STEP 3: DOCUMENT OCR MODULE -->
+            <div id="document-upload-card" class="hidden bg-white p-8 rounded-2xl shadow-xl border border-blue-100 max-w-3xl mx-auto mt-4 text-center">
+
+                <h2 class="text-2xl font-bold text-slate-800 mb-2">
+                    Previous Medical Documents
+                </h2>
+
+                <p class="text-slate-500 mb-6">
+                    Upload prescriptions, lab reports, or discharge summaries for OCR extraction.
+                </p>
+
+                <div class="border-2 border-dashed border-blue-200 rounded-2xl p-8 bg-blue-50/50 mb-6">
+
+                    <input
+                        type="file"
+                        id="doc-file-input"
+                        class="hidden"
+                        onchange="handleFileUpload(event)"
+                    >
+
+                    <label for="doc-file-input" class="cursor-pointer flex flex-col items-center">
+
+                        <i class="fa-solid fa-file-medical text-4xl text-blue-500 mb-2"></i>
+
+                        <span class="font-semibold text-slate-700">
+                            Scan or Upload Medical File
+                        </span>
+
+                        <span class="text-xs text-slate-400 mt-1">
+                            Supports PNG, JPG, PDF documents
+                        </span>
+
+                    </label>
+
+                </div>
+
+
+                <div id="ocr-results-box" class="hidden text-left bg-slate-50 p-4 rounded-xl border border-slate-200 mb-6">
+
+                    <h4 class="text-xs font-bold text-slate-500 uppercase mb-1">
+                        Extracted OCR Text
+                    </h4>
+
+                    <p id="ocr-text-content" class="text-sm font-mono text-slate-700 whitespace-pre-wrap"></p>
+
+                </div>
+
+
+                <div class="flex justify-between">
+
+                    <button onclick="finalizeCompleteCase()" class="px-6 py-3 border border-slate-300 hover:bg-slate-100 rounded-xl font-semibold text-slate-600 text-sm">
+                        Skip / No Documents
+                    </button>
+
+                    <button onclick="finalizeCompleteCase()" class="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-semibold text-sm shadow">
+                        Complete Registration
+                    </button>
+
+                </div>
+
+            </div>
+
+
+            <!-- STEP 4: FINAL SUMMARY SCREEN -->
+            <div id="summary-view-card" class="hidden bg-white p-8 rounded-2xl shadow-xl border border-blue-100 max-w-3xl mx-auto mt-4">
+
+                <div class="text-center mb-6">
+
+                    <div class="w-12 h-12 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto mb-2 text-xl">
+
+                        <i class="fa-solid fa-check"></i>
+
+                    </div>
+
+                    <h2 class="text-2xl font-bold text-slate-800">
+                        Case Submission Complete
+                    </h2>
+
+                    <p class="text-slate-500 text-sm">
+                        Your medical details have been structured and sent to the doctor.
+                    </p>
+
+                </div>
+
+
+                <div id="summary-content-render" class="space-y-3 text-sm bg-slate-50 p-6 rounded-xl border border-slate-200 mb-6">
+                </div>
+
+
+                <button onclick="location.reload()" class="w-full py-4 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-bold shadow text-base">
+                    Return to Home Screen
+                </button>
+
+            </div>
+
+        </section>
+
+
+        <!-- =================================================================== -->
+        <!-- VIEW 2: DOCTOR DASHBOARD                                            -->
+        <!-- =================================================================== -->
+
+        <section id="doctor-view" class="hidden">
+
+            <div class="grid grid-cols-12 gap-6">
+
+                <div class="col-span-4 bg-white rounded-2xl shadow-lg border border-slate-200 p-4 min-h-[600px]">
+
+                    <div class="flex justify-between items-center border-b pb-3 mb-4">
+
+                        <h3 class="font-bold text-slate-800">
+                            Patient Queue
+                        </h3>
+
+                        <button onclick="fetchDoctorQueue()" class="text-xs text-blue-600 hover:underline">
+                            <i class="fa-solid fa-arrows-rotate"></i>
+                            Refresh
+                        </button>
+
+                    </div>
+
+                    <div id="queue-list-container" class="space-y-2">
+                    </div>
+
+                </div>
+
+
+                <div class="col-span-8 bg-white rounded-2xl shadow-lg border border-slate-200 p-6 min-h-[600px]">
+
+                    <div id="case-detail-placeholder" class="text-center py-24 text-slate-400">
+
+                        <i class="fa-solid fa-notes-medical text-5xl mb-3"></i>
+
+                        <p>
+                            Select a patient record from the queue to inspect details.
+                        </p>
+
+                    </div>
+
+
+                    <div id="case-detail-content" class="hidden">
+
+                        <div class="flex justify-between items-start border-b pb-4 mb-4">
+
+                            <div>
+
+                                <h2 id="doc-patient-name" class="text-2xl font-bold text-slate-800">
+                                    --
+                                </h2>
+
+                                <p id="doc-patient-sub" class="text-xs text-slate-500 font-mono">
+                                    --
+                                </p>
+
+                            </div>
+
+                            <span id="doc-case-status" class="px-3 py-1 bg-amber-100 text-amber-800 rounded-full text-xs font-bold">
+                                PENDING
+                            </span>
+
+                        </div>
+
+
+                        <div class="grid grid-cols-2 gap-4 mb-4">
+
+                            <div class="bg-blue-50/50 p-4 rounded-xl border border-blue-100">
+
+                                <h4 class="text-xs font-bold text-blue-800 uppercase tracking-wider mb-1">
+                                    Reason for Visit
+                                </h4>
+
+                                <p id="doc-reason-text" class="text-sm font-semibold text-slate-800">
+                                    --
+                                </p>
+
+                            </div>
+
+
+                            <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+
+                                <h4 class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">
+                                    Symptoms Breakdown
+                                </h4>
+
+                                <p id="doc-symptoms-text" class="text-sm text-slate-700">
+                                    --
+                                </p>
+
+                            </div>
+
+                        </div>
+
+
+                        <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 mb-4">
+
+                            <h4 class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">
+                                Medical Background
+                            </h4>
+
+                            <p id="doc-history-text" class="text-sm text-slate-700">
+                                --
+                            </p>
+
+                        </div>
+
+
+                        <div class="bg-amber-50/60 p-4 rounded-xl border border-amber-200 mb-6">
+
+                            <h4 class="text-xs font-bold text-amber-900 uppercase tracking-wider mb-1">
+
+                                <i class="fa-solid fa-robot mr-1"></i>
+                                Structured Non-Diagnostic Summary
+
+                            </h4>
+
+                            <div id="doc-ai-summary-json" class="text-xs font-mono text-slate-700 whitespace-pre-wrap">
+                                --
+                            </div>
+
+                        </div>
+
+
+                        <div class="flex items-center space-x-3 pt-4 border-t">
+
+                            <button onclick="markCaseReviewed()" class="px-6 py-2.5 bg-green-600 hover:bg-green-700 text-white rounded-xl text-sm font-semibold shadow">
+
+                                <i class="fa-solid fa-check mr-1"></i>
+                                Verify & Mark Reviewed
+
+                            </button>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+    </main>
+
+
+    <script src="js/app.js"></script>
+
+</body>
+</html>
